@@ -1,6 +1,8 @@
-using LsKeeperSamscan.Example.Endpoints;
-using LsKeeperSamscan.Example.Services;
+using LsKeeperSamscan.Clients.Apha;
+using LsKeeperSamscan.Clients.DataBridge;
 using LsKeeperSamscan.Config;
+using LsKeeperSamscan.Scan.Endpoints;
+using LsKeeperSamscan.Scan.Services;
 using LsKeeperSamscan.Utils;
 using LsKeeperSamscan.Utils.Http;
 using LsKeeperSamscan.Utils.Mongo;
@@ -53,11 +55,36 @@ static void ConfigureServices(WebApplicationBuilder builder)
     ConfigureHeaderPropagation(services, configuration);
     ConfigureHttpClients(services);
     ConfigureMongo(services, configuration);
+    ConfigureOptions(services, configuration);
 
     services.AddHealthChecks();
 
     // App services
-    services.AddSingleton<IExamplePersistence, ExamplePersistence>();
+    services.AddSingleton<ICsvExportService, CsvExportService>();
+    services.AddSingleton<IS3UploadService, S3UploadService>();
+    services.AddSingleton<IScanJob, ScanJob>();
+}
+
+[ExcludeFromCodeCoverage]
+static void ConfigureOptions(IServiceCollection services, IConfiguration configuration)
+{
+    services
+        .AddOptions<AphaConfig>()
+        .Bind(configuration.GetRequiredSection("Apha"))
+        .ValidateDataAnnotations()
+        .ValidateOnStart();
+
+    services
+        .AddOptions<DataBridgeConfig>()
+        .Bind(configuration.GetRequiredSection("DataBridge"))
+        .ValidateDataAnnotations()
+        .ValidateOnStart();
+
+    services
+        .AddOptions<S3Config>()
+        .Bind(configuration.GetRequiredSection("S3"))
+        .ValidateDataAnnotations()
+        .ValidateOnStart();
 }
 
 [ExcludeFromCodeCoverage]
@@ -79,8 +106,9 @@ static void ConfigureHttpClients(IServiceCollection services)
 {
     services.AddTransient<ProxyHttpMessageHandler>();
 
-    // services.AddHttpClientWithTracing<IExampleClient, ExampleClient>();
-    // services.AddHttpClientWithProxy<IExternalClient, ExternalClient>();
+    services.AddHttpClientWithTracing<IAphaTokenProvider, AphaTokenProvider>();
+    services.AddHttpClientWithTracing<IAphaClient, AphaClient>();
+    services.AddHttpClientWithTracing<IDataBridgeClient, DataBridgeClient>();
 }
 
 [ExcludeFromCodeCoverage]
@@ -112,6 +140,5 @@ static void ConfigureEndpoints(WebApplication app)
 {
     app.MapHealthChecks("/health", new HealthCheckOptions());
 
-    // Remove before deploying
-    app.MapExampleEndpoints();
+    app.MapScanEndpoints();
 }
