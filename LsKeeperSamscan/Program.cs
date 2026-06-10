@@ -5,12 +5,9 @@ using LsKeeperSamscan.Scan.Endpoints;
 using LsKeeperSamscan.Scan.Services;
 using LsKeeperSamscan.Utils;
 using LsKeeperSamscan.Utils.Http;
-using LsKeeperSamscan.Utils.Mongo;
 using System.Diagnostics.CodeAnalysis;
 using LsKeeperSamscan.Utils.Logging;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using MongoDB.Driver;
-using MongoDB.Driver.Authentication.AWS;
 using Serilog;
 
 var app = BuildApp(args);
@@ -54,7 +51,6 @@ static void ConfigureServices(WebApplicationBuilder builder)
 
     ConfigureHeaderPropagation(services, configuration);
     ConfigureHttpClients(services);
-    ConfigureMongo(services, configuration);
     ConfigureOptions(services, configuration);
 
     services.AddHealthChecks();
@@ -109,22 +105,6 @@ static void ConfigureHttpClients(IServiceCollection services)
     services.AddHttpClientWithTracing<IAphaTokenProvider, AphaTokenProvider>();
     services.AddHttpClientWithTracing<IAphaClient, AphaClient>();
     services.AddHttpClientWithTracing<IDataBridgeClient, DataBridgeClient>();
-}
-
-[ExcludeFromCodeCoverage]
-static void ConfigureMongo(IServiceCollection services, IConfiguration configuration)
-{
-
-    MongoExtensions.Register();
-    MongoConventions.Register();
-
-    services
-        .AddOptions<MongoConfig>()
-        .Bind(configuration.GetRequiredSection("Mongo"))
-        .ValidateDataAnnotations()
-        .ValidateOnStart();
-
-    services.AddSingleton<IMongoDbClientFactory, MongoDbClientFactory>();
 }
 
 [ExcludeFromCodeCoverage]

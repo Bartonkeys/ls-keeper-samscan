@@ -86,9 +86,7 @@ public class ScanEndpointsTest
                     ["DataBridge:BaseUrl"] = "https://test.example.com",
                     ["DataBridge:PageSize"] = "10",
                     ["S3:BucketName"] = "test-bucket",
-                    ["S3:Region"] = "eu-west-2",
-                    ["Mongo:DatabaseUri"] = "mongodb://localhost:27017",
-                    ["Mongo:DatabaseName"] = "test-db"
+                    ["S3:Region"] = "eu-west-2"
                 });
             });
 
