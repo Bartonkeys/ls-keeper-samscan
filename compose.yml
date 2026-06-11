@@ -33,16 +33,15 @@ services:
       S3__ForcePathStyle: "true"
       S3__BucketName: ls-keeper-samscan
       S3__Region: eu-west-2
-      # Set CDP_API_KEY to use ephemeral protected endpoint for local dev
-      # Or set APHA_CLIENT_ID + APHA_CLIENT_SECRET for OAuth2 (production-like)
+      # CDP API key — single key used for both APHA and DataBridge via ephemeral protected endpoint
+      Cdp__ApiKey: ${CDP_API_KEY:-}
+      # APHA bridge
       Apha__BaseUrl: ${APHA_BASE_URL:-https://ephemeral-protected.api.ext-test.cdp-int.defra.cloud/apha-integration-bridge}
-      Apha__ApiKey: ${CDP_API_KEY:-}
       Apha__TokenUrl: ${APHA_TOKEN_URL:-}
       Apha__ClientId: ${APHA_CLIENT_ID:-}
       Apha__ClientSecret: ${APHA_CLIENT_SECRET:-}
-      # Data Bridge — also uses x-api-key via ephemeral protected endpoint for local dev
+      # Data Bridge
       DataBridge__BaseUrl: ${DATA_BRIDGE_URL:-https://ephemeral-protected.api.ext-test.cdp-int.defra.cloud/ls-keeper-data-bridge-backend}
-      DataBridge__ApiKey: ${CDP_API_KEY:-}
       # AWS SDK fallback endpoint
       AWS_ENDPOINT_URL: http://floci:4566
     networks:

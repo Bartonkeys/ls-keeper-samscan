@@ -79,8 +79,8 @@ public class ScanEndpointsTest
             {
                 config.AddInMemoryCollection(new Dictionary<string, string?>
                 {
+                    ["Cdp:ApiKey"] = "test-api-key",
                     ["Apha:BaseUrl"] = "https://test.example.com",
-                    ["Apha:ApiKey"] = "test-api-key",
                     ["DataBridge:BaseUrl"] = "https://test.example.com",
                     ["DataBridge:PageSize"] = "10",
                     ["S3:BucketName"] = "test-bucket",
