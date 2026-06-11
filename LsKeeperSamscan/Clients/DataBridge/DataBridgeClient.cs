@@ -53,6 +53,13 @@ public class DataBridgeClient(
         {
             request.Headers.Add("x-api-key", cdpOptions.Value.ApiKey);
         }
+
+        var authKey = options.Value.AuthKey;
+        if (!string.IsNullOrEmpty(authKey))
+        {
+            request.Headers.TryAddWithoutValidation("Authorization", $"ApiKey {authKey}");
+        }
+
         return request;
     }
 

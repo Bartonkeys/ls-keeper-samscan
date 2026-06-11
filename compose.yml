@@ -42,6 +42,7 @@ services:
       Apha__ClientSecret: ${APHA_CLIENT_SECRET:-}
       # Data Bridge
       DataBridge__BaseUrl: ${DATA_BRIDGE_URL:-https://ephemeral-protected.api.ext-test.cdp-int.defra.cloud/ls-keeper-data-bridge-backend}
+      DataBridge__AuthKey: ${DATA_BRIDGE_AUTH_KEY:-}
       # AWS SDK fallback endpoint
       AWS_ENDPOINT_URL: http://floci:4566
     networks:
