@@ -16,7 +16,7 @@ public class DataBridgeClient(
 
     public async Task<int> GetSamHoldingsCountAsync(CancellationToken cancellationToken = default)
     {
-        var url = $"{options.Value.BaseUrl}/api/query/{CollectionName}?$top=0&$count=true";
+        var url = $"{options.Value.BaseUrl}/api/query/{CollectionName}?$top=1&$count=true";
         logger.LogInformation("Fetching SAM holdings count from {Url}", url);
 
         var request = CreateRequest(HttpMethod.Get, url);
