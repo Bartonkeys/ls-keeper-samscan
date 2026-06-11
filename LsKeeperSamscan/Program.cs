@@ -69,6 +69,10 @@ static void ConfigureServices(WebApplicationBuilder builder)
 static void ConfigureOptions(IServiceCollection services, IConfiguration configuration)
 {
     services
+        .AddOptions<CdpConfig>()
+        .Bind(configuration.GetSection("Cdp"));
+
+    services
         .AddOptions<AphaConfig>()
         .Bind(configuration.GetRequiredSection("Apha"))
         .ValidateDataAnnotations()

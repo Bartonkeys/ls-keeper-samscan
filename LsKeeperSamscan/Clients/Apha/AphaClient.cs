@@ -11,6 +11,7 @@ public class AphaClient(
     HttpClient httpClient,
     IAphaTokenProvider tokenProvider,
     IOptions<AphaConfig> options,
+    IOptions<CdpConfig> cdpOptions,
     ILogger<AphaClient> logger) : IAphaClient
 {
     public async Task<(AphaHoldingData? Holding, long ElapsedMs)> GetHoldingAsync(
@@ -116,9 +117,9 @@ public class AphaClient(
     {
         var request = new HttpRequestMessage(method, url);
 
-        if (options.Value.UseApiKeyAuth)
+        if (cdpOptions.Value.UseApiKeyAuth)
         {
-            request.Headers.Add("x-api-key", options.Value.ApiKey);
+            request.Headers.Add("x-api-key", cdpOptions.Value.ApiKey);
         }
         else
         {

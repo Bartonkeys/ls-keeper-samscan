@@ -9,6 +9,7 @@ namespace LsKeeperSamscan.Clients.DataBridge;
 public class DataBridgeClient(
     HttpClient httpClient,
     IOptions<DataBridgeConfig> options,
+    IOptions<CdpConfig> cdpOptions,
     ILogger<DataBridgeClient> logger) : IDataBridgeClient
 {
     private const string CollectionName = "sam_cph_holdings";
@@ -48,10 +49,9 @@ public class DataBridgeClient(
     private HttpRequestMessage CreateRequest(HttpMethod method, string url)
     {
         var request = new HttpRequestMessage(method, url);
-        var apiKey = options.Value.ApiKey;
-        if (!string.IsNullOrEmpty(apiKey))
+        if (cdpOptions.Value.UseApiKeyAuth)
         {
-            request.Headers.Add("x-api-key", apiKey);
+            request.Headers.Add("x-api-key", cdpOptions.Value.ApiKey);
         }
         return request;
     }
