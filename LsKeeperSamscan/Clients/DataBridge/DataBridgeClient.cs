@@ -18,7 +18,11 @@ public class DataBridgeClient(
         var url = $"{options.Value.BaseUrl}/api/query/{CollectionName}?$top=0&$count=true";
         logger.LogInformation("Fetching SAM holdings count from {Url}", url);
 
-        var response = await httpClient.GetFromJsonAsync<ODataQueryResponse>(url, cancellationToken);
+        var request = CreateRequest(HttpMethod.Get, url);
+        var httpResponse = await httpClient.SendAsync(request, cancellationToken);
+        httpResponse.EnsureSuccessStatusCode();
+
+        var response = await httpResponse.Content.ReadFromJsonAsync<ODataQueryResponse>(cancellationToken: cancellationToken);
         var count = (int)(response?.TotalCount ?? 0);
 
         logger.LogInformation("SAM holdings total count: {Count}", count);
@@ -30,11 +34,26 @@ public class DataBridgeClient(
         var url = $"{options.Value.BaseUrl}/api/query/{CollectionName}?$skip={skip}&$top={take}&$count=false&$select=CPH";
         logger.LogInformation("Fetching SAM holdings page skip={Skip} take={Take} from {Url}", skip, take, url);
 
-        var response = await httpClient.GetFromJsonAsync<ODataQueryResponse>(url, cancellationToken);
+        var request = CreateRequest(HttpMethod.Get, url);
+        var httpResponse = await httpClient.SendAsync(request, cancellationToken);
+        httpResponse.EnsureSuccessStatusCode();
+
+        var response = await httpResponse.Content.ReadFromJsonAsync<ODataQueryResponse>(cancellationToken: cancellationToken);
         var cphs = ExtractCphValues(response?.Data);
 
         logger.LogInformation("Fetched {Count} SAM holdings (skip={Skip})", cphs.Count, skip);
         return cphs;
+    }
+
+    private HttpRequestMessage CreateRequest(HttpMethod method, string url)
+    {
+        var request = new HttpRequestMessage(method, url);
+        var apiKey = options.Value.ApiKey;
+        if (!string.IsNullOrEmpty(apiKey))
+        {
+            request.Headers.Add("x-api-key", apiKey);
+        }
+        return request;
     }
 
     private static List<string> ExtractCphValues(IReadOnlyList<Dictionary<string, JsonElement>>? data)

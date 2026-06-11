@@ -36,8 +36,8 @@ public class AphaTokenProvider(
             var content = new FormUrlEncodedContent(new Dictionary<string, string>
             {
                 ["grant_type"] = "client_credentials",
-                ["client_id"] = config.ClientId,
-                ["client_secret"] = config.ClientSecret
+                ["client_id"] = config.ClientId ?? string.Empty,
+                ["client_secret"] = config.ClientSecret ?? string.Empty
             });
 
             var response = await httpClient.PostAsync(config.TokenUrl, content, cancellationToken);

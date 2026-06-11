@@ -80,9 +80,7 @@ public class ScanEndpointsTest
                 config.AddInMemoryCollection(new Dictionary<string, string?>
                 {
                     ["Apha:BaseUrl"] = "https://test.example.com",
-                    ["Apha:TokenUrl"] = "https://test.example.com/oauth2/token",
-                    ["Apha:ClientId"] = "test-client-id",
-                    ["Apha:ClientSecret"] = "test-client-secret",
+                    ["Apha:ApiKey"] = "test-api-key",
                     ["DataBridge:BaseUrl"] = "https://test.example.com",
                     ["DataBridge:PageSize"] = "10",
                     ["S3:BucketName"] = "test-bucket",

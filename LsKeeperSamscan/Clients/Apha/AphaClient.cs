@@ -114,9 +114,18 @@ public class AphaClient(
 
     private async Task<HttpRequestMessage> CreateAuthedRequest(HttpMethod method, string url, CancellationToken cancellationToken)
     {
-        var token = await tokenProvider.GetAccessTokenAsync(cancellationToken);
         var request = new HttpRequestMessage(method, url);
-        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        if (options.Value.UseApiKeyAuth)
+        {
+            request.Headers.Add("x-api-key", options.Value.ApiKey);
+        }
+        else
+        {
+            var token = await tokenProvider.GetAccessTokenAsync(cancellationToken);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        }
+
         return request;
     }
 }
