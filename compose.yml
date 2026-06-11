@@ -1,4 +1,3 @@
-version: '3.4'
 services:
   # floci is a replacement for localstack. It emulates AWS resources (sqs, sns, s3 etc) for local development
   # See: https://floci.io for more details
@@ -17,34 +16,10 @@ services:
 
   ################################################################################
 
-  # your-frontend:
-  #   image: defradigital/your-frontend:${YOUR_FRONTEND_VERSION:-latest}
-  #   ports:
-  #     - '3000:3000'
-  #   links:
-  #     - 'floci:floci'
-  #     - 'redis:redis'
-  #   depends_on:
-  #     floci:
-  #       condition: service_healthy
-  #     redis:
-  #       condition: service_started
-  #   env_file:
-  #     - 'compose/aws.env'
-  #   environment:
-  #     PORT: 3000
-  #     NODE_ENV: development
-  #     REDIS_HOST: redis
-  #     USE_SINGLE_INSTANCE_CACHE: true
-  #   networks:
-  #     - cdp-tenant
-
-  your-backend:
+  ls-keeper-samscan:
     build: ./
     ports:
       - '8085:8085'
-    links:
-      - 'floci:floci'
     depends_on:
       floci:
         condition: service_healthy
@@ -52,6 +27,21 @@ services:
       - 'compose/aws.env'
     environment:
       ASPNETCORE_URLS: http://+:8085
+      ASPNETCORE_ENVIRONMENT: Development
+      # S3 overrides — inside the Docker network, floci is at http://floci:4566
+      S3__ServiceUrl: http://floci:4566
+      S3__ForcePathStyle: "true"
+      S3__BucketName: ls-keeper-samscan
+      S3__Region: eu-west-2
+      # APHA credentials — replace with real values to run scans
+      Apha__BaseUrl: https://apha-integration-bridge.api.ext-test.cdp-int.defra.cloud
+      Apha__TokenUrl: https://apha-integration-bridge.api.ext-test.cdp-int.defra.cloud/oauth2/token
+      Apha__ClientId: ${APHA_CLIENT_ID:-placeholder}
+      Apha__ClientSecret: ${APHA_CLIENT_SECRET:-placeholder}
+      # Data Bridge
+      DataBridge__BaseUrl: ${DATA_BRIDGE_URL:-http://host.docker.internal:5000}
+      # AWS SDK fallback endpoint
+      AWS_ENDPOINT_URL: http://floci:4566
     networks:
       - cdp-tenant
 
