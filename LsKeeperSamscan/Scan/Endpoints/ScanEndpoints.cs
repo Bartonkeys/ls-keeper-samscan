@@ -13,8 +13,12 @@ public static class ScanEndpoints
         var group = app.MapGroup("/api/scan")
             .WithTags("Scan");
 
-        group.MapPost(string.Empty, TriggerScan);
-        group.MapGet("/status", GetStatus);
+        group.MapPost(string.Empty, TriggerScan)
+            .WithSummary("Trigger SAM scan")
+            .WithDescription("Starts a batch scan of SAM holdings. Returns 202 if started, 409 if a scan is already running.");
+        group.MapGet("/status", GetStatus)
+            .WithSummary("Get scan status")
+            .WithDescription("Returns the current state of the scan job including progress counts and pre-signed CSV download URL when complete.");
 
         return group;
     }

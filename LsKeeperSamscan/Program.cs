@@ -55,6 +55,10 @@ static void ConfigureServices(WebApplicationBuilder builder)
 
     services.AddHealthChecks();
 
+    // OpenAPI / Swagger
+    services.AddEndpointsApiExplorer();
+    services.AddSwaggerGen();
+
     // App services
     services.AddSingleton<ICsvExportService, CsvExportService>();
     services.AddSingleton<IS3UploadService, S3UploadService>();
@@ -113,6 +117,13 @@ static void ConfigureMiddleware(WebApplication app)
     app.UseSerilogRequestLogging();
 
     app.UseHeaderPropagation();
+
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "LS Keeper SAM Scan v1");
+        c.RoutePrefix = "swagger";
+    });
 }
 
 [ExcludeFromCodeCoverage]
