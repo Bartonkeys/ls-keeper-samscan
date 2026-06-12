@@ -81,6 +81,9 @@ public class ScanEndpointsTest
                 {
                     ["Cdp:ApiKey"] = "test-api-key",
                     ["Apha:BaseUrl"] = "https://test.example.com",
+                    ["Apha:TokenUrl"] = "https://test.example.com/oauth2/token",
+                    ["Apha:ClientId"] = "test-client-id",
+                    ["Apha:ClientSecret"] = "test-client-secret",
                     ["DataBridge:BaseUrl"] = "https://test.example.com",
                     ["DataBridge:PageSize"] = "10",
                     ["S3:BucketName"] = "test-bucket",

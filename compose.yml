@@ -33,13 +33,13 @@ services:
       S3__ForcePathStyle: "true"
       S3__BucketName: ls-keeper-samscan
       S3__Region: eu-west-2
-      # CDP API key — single key used for both APHA and DataBridge via ephemeral protected endpoint
+      # CDP API key — used for DataBridge via ephemeral protected endpoint
       Cdp__ApiKey: ${CDP_API_KEY:-}
-      # APHA bridge
-      Apha__BaseUrl: ${APHA_BASE_URL:-https://ephemeral-protected.api.ext-test.cdp-int.defra.cloud/apha-integration-bridge}
-      Apha__TokenUrl: ${APHA_TOKEN_URL:-}
-      Apha__ClientId: ${APHA_CLIENT_ID:-}
-      Apha__ClientSecret: ${APHA_CLIENT_SECRET:-}
+      # APHA bridge — uses OAuth2 client_credentials
+      Apha__BaseUrl: ${APHA_BASE_URL:-https://apha-integration-bridge.api.ext-test.cdp-int.defra.cloud}
+      Apha__TokenUrl: ${APHA_TOKEN_URL:-https://apha-integration-bridge.api.ext-test.cdp-int.defra.cloud/oauth2/token}
+      Apha__ClientId: ${APHA_CLIENT_ID}
+      Apha__ClientSecret: ${APHA_CLIENT_SECRET}
       # Data Bridge
       DataBridge__BaseUrl: ${DATA_BRIDGE_URL:-https://ephemeral-protected.api.ext-test.cdp-int.defra.cloud/ls-keeper-data-bridge-backend}
       DataBridge__AuthKey: ${DATA_BRIDGE_AUTH_KEY:-}
