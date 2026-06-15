@@ -15,4 +15,7 @@ public class AphaConfig
 
     [Required]
     public required string ClientSecret { get; init; }
+
+    [Range(1, 1000)]
+    public int RateLimitPerSecond { get; init; } = 10;
 }

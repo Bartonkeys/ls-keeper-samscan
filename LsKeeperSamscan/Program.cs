@@ -8,6 +8,7 @@ using LsKeeperSamscan.Utils.Http;
 using System.Diagnostics.CodeAnalysis;
 using LsKeeperSamscan.Utils.Logging;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Polly;
 using Serilog;
 
 var app = BuildApp(args);
@@ -109,9 +110,25 @@ static void ConfigureHeaderPropagation(IServiceCollection services, IConfigurati
 static void ConfigureHttpClients(IServiceCollection services)
 {
     services.AddTransient<ProxyHttpMessageHandler>();
+    services.AddSingleton<AphaRateLimitingHandler>();
 
     services.AddHttpClientWithTracing<IAphaTokenProvider, AphaTokenProvider>();
-    services.AddHttpClientWithTracing<IAphaClient, AphaClient>();
+    services.AddHttpClientWithTracing<IAphaClient, AphaClient>()
+        .AddHttpMessageHandler<AphaRateLimitingHandler>()
+        .AddStandardResilienceHandler(options =>
+        {
+            // Retry: up to 3 retries with exponential back-off + jitter
+            options.Retry.MaxRetryAttempts = 3;
+            options.Retry.Delay = TimeSpan.FromSeconds(2);
+            options.Retry.BackoffType = Polly.DelayBackoffType.Exponential;
+            options.Retry.UseJitter = true;
+
+            // Give each individual attempt 30 s before timing out
+            options.AttemptTimeout.Timeout = TimeSpan.FromSeconds(30);
+
+            // Allow the entire call (all retries) up to 2 minutes total
+            options.TotalRequestTimeout.Timeout = TimeSpan.FromMinutes(2);
+        });
     services.AddHttpClientWithTracing<IDataBridgeClient, DataBridgeClient>();
 }
 
