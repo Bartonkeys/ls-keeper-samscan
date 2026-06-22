@@ -14,4 +14,11 @@ public class DataBridgeConfig
     /// Authorization key for the data bridge (sent as "Authorization: ApiKey {value}").
     /// </summary>
     public string? AuthKey { get; init; }
+
+    /// <summary>
+    /// When set, caps the number of SAM holdings processed per scan run.
+    /// Useful for testing end-to-end without processing the full dataset.
+    /// Leave null (or omit from config) for a full run.
+    /// </summary>
+    public int? MaxHoldings { get; init; }
 }

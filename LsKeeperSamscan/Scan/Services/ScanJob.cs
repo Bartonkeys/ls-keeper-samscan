@@ -61,7 +61,17 @@ public class ScanJob(
             // Step 1: Get total count
             var totalCount = await dataBridgeClient.GetSamHoldingsCountAsync();
             _status.TotalHoldings = totalCount;
-            logger.LogInformation("SAM scan: {TotalCount} holdings to process", totalCount);
+
+            if (dataBridgeOptions.Value.MaxHoldings.HasValue)
+            {
+                totalCount = Math.Min(totalCount, dataBridgeOptions.Value.MaxHoldings.Value);
+                logger.LogWarning("SAM scan: MaxHoldings cap active, processing {CappedCount} of {TotalCount} holdings",
+                    totalCount, _status.TotalHoldings);
+            }
+            else
+            {
+                logger.LogInformation("SAM scan: {TotalCount} holdings to process", totalCount);
+            }
 
             // Step 2 & 3: Page through holdings and enrich each
             var pageSize = dataBridgeOptions.Value.PageSize;

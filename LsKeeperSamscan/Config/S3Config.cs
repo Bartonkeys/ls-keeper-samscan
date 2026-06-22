@@ -10,17 +10,22 @@ public class S3Config
     [Required]
     public required string Region { get; init; }
 
-    public string Prefix { get; init; } = "samscan";
+    public string? Prefix { get; init; }
 
     public int PreSignedUrlTtlDays { get; init; } = 7;
 
     /// <summary>
-    /// Optional override for local development (e.g. LocalStack/Floci endpoint).
+    /// Optional override for the S3 service endpoint (e.g. LocalStack).
     /// </summary>
     public string? ServiceUrl { get; init; }
 
-    /// <summary>
-    /// Required when using LocalStack/Floci (path-style access).
-    /// </summary>
     public bool ForcePathStyle { get; init; }
+
+    public string? AuthKey { get; init; }
+
+    /// <summary>
+    /// Development only: when set, the CSV is written to this local directory
+    /// instead of being uploaded to S3. See <see cref="Scan.Services.LocalS3UploadService"/>.
+    /// </summary>
+    public string? LocalOutputPath { get; init; }
 }
